@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class HomeController {
 
 
-    @GetMapping("/hello")
+    @GetMapping("/blog")
     public String hello(@RequestParam(name="name2", required=false) int[] name2, Model model) {
         model.addAttribute("name2", name2);
         String[] continents = {
@@ -21,6 +21,17 @@ public class HomeController {
         };
 
         model.addAttribute("continents", continents);
-        return "hello";
+        return "blog";
+    }
+
+    @GetMapping("/")
+    public String index(Model model) {
+        String[] continents = {
+                "Africa", "Antarctica", "Asia", "Australia",
+                "Europe", "North America", "Sourth America"
+        };
+
+        model.addAttribute("continents", continents);
+        return "index";
     }
 }
