@@ -5,12 +5,30 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Stock {
     private String currency;
-    private String symbol;
+    public String symbol;
     private double regularMarketPrice;
     private String exchangeTimezoneName;
     private double previousClose;
+    private boolean stat;
+    private String perc;
 
     public Stock() {
+    }
+
+    public boolean isStat() {
+        return stat;
+    }
+
+    public void setStat(boolean stat) {
+        this.stat = stat;
+    }
+
+    public String getPerc() {
+        return perc;
+    }
+
+    public void setPerc(String perc) {
+        this.perc = perc;
     }
 
     public String getCurrency() {
@@ -61,6 +79,9 @@ public class Stock {
                 ", regularMarketPrice=" + regularMarketPrice +
                 ", exchangeTimezoneName='" + exchangeTimezoneName + '\'' +
                 ", previousClose=" + previousClose +
+                ", stat=" + stat +
+                ", perc=" + perc +
+
                 '}';
     }
 }

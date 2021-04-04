@@ -17,20 +17,48 @@ import java.util.Iterator;
 @Controller
 public class ApiController {
 
-    @GetMapping("/data")
-    public String getData(Model model) throws UnirestException, JsonProcessingException {
+//    @GetMapping("/data")
+//    public String getData(Model model) throws UnirestException, JsonProcessingException {
+//
+//        String json = api_response();
+//        Stock stock = parseJson(json);
+//        System.out.println("stock : " + stock.toString());
+//
+//        model.addAttribute("stock", stock);
+//
+//        return "data";
+//    }
 
-        String json = api_response();
-        Stock stock = parseJson(json);
-        System.out.println("stock : " + stock.toString());
+    @GetMapping("/")
+    public String getIndex(Model model) throws UnirestException, JsonProcessingException {
 
-        model.addAttribute("stock", stock);
+        String[] symbols = {"TSLA", "NKE", "GOOGL", "AZN"};
+        Stock[] stocks= new Stock[symbols.length];
 
-        return "data";
+        for (int i = 0; i <= 3; i++) {
+
+            String json = api_response(symbols[i]);
+            Stock stock = parseJson(json);
+            System.out.println("stock : " + stock.toString());
+
+            double per = Math.round((stock.getRegularMarketPrice() - stock.getPreviousClose()) / stock.getPreviousClose() * 10000);
+            double per2 = per / 100;
+            boolean stat = (per2 >= 0);
+            String perc = per2 + "%";
+            stock.setStat(stat);
+            stock.setPerc(perc);
+            stocks[i]=stock;
+        }
+
+        String[] testes={"Asd","asbh"};
+        model.addAttribute("stocks", stocks);
+        model.addAttribute("testes", testes);
+
+        return "index";
     }
 
-    private String api_response() throws UnirestException {
-        HttpResponse<String> response = Unirest.get("https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-chart?interval=5m&symbol=TSLA&range=1d&region=US&=&=apidojo-yahoo-finance-v1.p.rapidapi.com")
+    private String api_response(String symbol) throws UnirestException {
+        HttpResponse<String> response = Unirest.get("https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-chart?interval=5m&symbol="+symbol+"&range=1d&region=US&=&=apidojo-yahoo-finance-v1.p.rapidapi.com")
                 .header("x-rapidapi-key", "15c0328c08msh88388eb63d58c40p1ae8b9jsnf4d797bbcc8f")
                 .header("x-rapidapi-host", "apidojo-yahoo-finance-v1.p.rapidapi.com")
                 .asString();

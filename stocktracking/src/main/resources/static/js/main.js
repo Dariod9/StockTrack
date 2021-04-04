@@ -10,6 +10,14 @@
   /**
    * Easy selector helper function
    */
+  // if(Number(document.getElementById("num1"))<Number(document.getElementById("num2"))){
+  //   document.getElementById("res1").innerHTML="num1 menor"
+  //
+  // }
+  // else{
+  //   document.getElementById("res1").innerHTML="num1 maior"
+  // }
+
   const select = (el, all = false) => {
     el = el.trim()
     if (all) {

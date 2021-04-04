@@ -23,14 +23,14 @@ public class HomeController {
         return "blog";
     }
 
-    @GetMapping("/")
-    public String index(Model model) {
-        String[] continents = {
-                "Africa", "Antarctica", "Asia", "Australia",
-                "Europe", "North America", "Sourth America"
-        };
-
-        model.addAttribute("continents", continents);
-        return "index";
-    }
+//    @GetMapping("/")
+//    public String index(Model model) {
+//        String[] continents = {
+//                "Africa", "Antarctica", "Asia", "Australia",
+//                "Europe", "North America", "Sourth America"
+//        };
+//
+//        model.addAttribute("continents", continents);
+//        return "index";
+//    }
 }
