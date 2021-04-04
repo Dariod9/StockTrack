@@ -1,44 +1,76 @@
 package com.example.stocktracking.api;
 
-import com.example.stocktracking.models.ApiResult;
+import com.example.stocktracking.models.Stock;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.io.DataInput;
-import java.io.IOException;
+import java.util.Iterator;
 
-@RestController
+@Controller
 public class ApiController {
 
     @GetMapping("/data")
-    public String getData() throws UnirestException, JsonProcessingException {
+    public String getData(Model model) throws UnirestException, JsonProcessingException {
 
-        HttpResponse<String> response = Unirest.get("https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/v2/get-quotes?region=US&symbols=AMD%2CIBM%2CAAPL")
+        String json = api_response();
+        Stock stock = parseJson(json);
+        System.out.println("stock : " + stock.toString());
+
+        model.addAttribute("stock", stock);
+
+        return "data";
+    }
+
+    private String api_response() throws UnirestException {
+        HttpResponse<String> response = Unirest.get("https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-chart?interval=5m&symbol=TSLA&range=1d&region=US&=&=apidojo-yahoo-finance-v1.p.rapidapi.com")
                 .header("x-rapidapi-key", "15c0328c08msh88388eb63d58c40p1ae8b9jsnf4d797bbcc8f")
                 .header("x-rapidapi-host", "apidojo-yahoo-finance-v1.p.rapidapi.com")
                 .asString();
 
         System.out.println(response.getHeaders());
-        System.out.println("response: " + response.toString());
         System.out.println("response: " + response.getBody());
 
-        String json = response.getBody();
+        return response.getBody();
+    }
 
+    private Stock parseJson(String json) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode node = objectMapper.readTree(String.valueOf(json));
-//        ApiResult node = objectMapper.treeToValue(n, ApiResult.class);
-//        ApiResult node = objectMapper.readValue(response, ApiResult.class);
 
-        String result = node.get("quoteResponse").get("result").toString();
-        System.out.println("result : " + result);
+        ArrayNode result = (ArrayNode) node.get("chart").get("result");
+        JsonNode meta = result.get(0).get("meta");
+        System.out.println("meta : " + meta);
 
-        return result;
+        // json to object
+        return objectMapper.readValue(meta.toString(), Stock.class);
+    }
+
+
+    // not used
+    private void process(String prefix, JsonNode currentNode) {
+        if (currentNode.isArray()) {
+            ArrayNode arrayNode = (ArrayNode) currentNode;
+            Iterator<JsonNode> node = arrayNode.elements();
+            int index = 1;
+            while (node.hasNext()) {
+                process(!prefix.isEmpty() ? prefix + "-" + index : String.valueOf(index), node.next());
+                index += 1;
+            }
+        }
+        else if (currentNode.isObject()) {
+            currentNode.fields().forEachRemaining(entry -> process(!prefix.isEmpty() ? prefix + "-" + entry.getKey() : entry.getKey(), entry.getValue()));
+        }
+        else {
+            System.out.println(prefix + ": " + currentNode.toString());
+        }
     }
 
 }
