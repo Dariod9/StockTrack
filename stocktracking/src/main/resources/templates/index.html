@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Moderna Bootstrap Template - Index</title>
+    <title>Moderna</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -108,33 +108,52 @@
             <br>
             <br>
             <div class="row">
-                <div th:each="stock, stat : ${stocks}" class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up" >
+                <div th:each="stock : ${stocks}" class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up" >
                     <div class="icon-box icon-box-pink">
-<!--                        <div class="icon"><i class="bx bxl-dribbble"></i></div>-->
-                        <h4 class="title" th:text="${stocks[__${stat.index}__].getSymbol()}"></h4>
+                        <!--                        <div class="icon"><i class="bx bxl-dribbble"></i></div>-->
+                        <h4 class="title" th:text="${stock.getSymbol()}"></h4>
                         <br>
                         <div>
                             <br>
-                            <p><b>Currency:</b> <a th:text="${stocks[__${stat.index}__].getCurrency()}"></a></p>
-                            <p><b>Symbol:</b> <a th:text="${stocks[__${stat.index}__].getSymbol()}"></a></p>
-                            <p><b>TimeZone:</b> <a th:text="${stocks[__${stat.index}__].getExchangeTimezoneName()}"></a></p>
-                            <p><b>Market Price:</b> <a  th:text="${stocks[__${stat.index}__].getRegularMarketPrice()}"></a></p>
-                            <p><b>Previous Close Price:</b> <a th:text="${stocks[__${stat.index}__].getPreviousClose()}"></a></p>
-                            <td>
-                                <span th:if="${not stocks[__${stat.index}__].isStat()}" style="color:red"><b>Variation: </b><a  th:text="${stocks[__${stat.index}__].getPerc()}"></a></span>
-                                <span th:unless="${not stocks[__${stat.index}__].isStat()}" style="color:green"><b>Variation: </b><a  th:text="${stocks[__${stat.index}__].getPerc()}"></a></span>
-                            </td>
+                            <p><b>Currency:</b> <a th:text="${stock.getCurrency()}"></a></p>
+                            <p><b>Symbol:</b> <a th:text="${stock.getSymbol()}"></a></p>
+                            <p><b>TimeZone:</b> <a th:text="${stock.getExchangeTimezoneName()}"></a></p>
+                            <p><b>Market Price:</b> <a  th:text="${stock.getRegularMarketPrice()}"></a></p>
+                            <p><b>Previous Close Price:</b> <a th:text="${stock.getPreviousClose()}"></a></p>
+                            <p>
+                                <span th:if="${not stock.isStat()}" style="color:red"><b>Variation: </b><a  th:text="${stock.getPerc()}"></a></span>
+                                <span th:unless="${not stock.isStat()}" style="color:green"><b>Variation: </b><a  th:text="${stock.getPerc()}"></a></span>
+                            </p>
                             <p><b></b> <a id="res1"></a></p>
                         </div>
                     </div>
-
-
                 </div>
-
-
             </div>
-
         </div>
+                                                <!-- Mesma coisa mas com array        -->
+<!--            <div class="row">-->
+<!--                <div th:each="stock, stat : ${stocks}" class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="fade-up" >-->
+<!--                    <div class="icon-box icon-box-pink">-->
+<!--&lt;!&ndash;                        <div class="icon"><i class="bx bxl-dribbble"></i></div>&ndash;&gt;-->
+<!--                        <h4 class="title" th:text="${stocks[__${stat.index}__].getSymbol()}"></h4>-->
+<!--                        <br>-->
+<!--                        <div>-->
+<!--                            <br>-->
+<!--                            <p><b>Currency:</b> <a th:text="${stocks[__${stat.index}__].getCurrency()}"></a></p>-->
+<!--                            <p><b>Symbol:</b> <a th:text="${stocks[__${stat.index}__].getSymbol()}"></a></p>-->
+<!--                            <p><b>TimeZone:</b> <a th:text="${stocks[__${stat.index}__].getExchangeTimezoneName()}"></a></p>-->
+<!--                            <p><b>Market Price:</b> <a  th:text="${stocks[__${stat.index}__].getRegularMarketPrice()}"></a></p>-->
+<!--                            <p><b>Previous Close Price:</b> <a th:text="${stocks[__${stat.index}__].getPreviousClose()}"></a></p>-->
+<!--                            <td>-->
+<!--                                <span th:if="${not stocks[__${stat.index}__].isStat()}" style="color:red"><b>Variation: </b><a  th:text="${stocks[__${stat.index}__].getPerc()}"></a></span>-->
+<!--                                <span th:unless="${not stocks[__${stat.index}__].isStat()}" style="color:green"><b>Variation: </b><a  th:text="${stocks[__${stat.index}__].getPerc()}"></a></span>-->
+<!--                            </td>-->
+<!--                            <p><b></b> <a id="res1"></a></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </section><!-- End Services Section -->
 
 <!--    &lt;!&ndash; ======= Why Us Section ======= &ndash;&gt;-->
@@ -368,6 +387,7 @@
 <!-- Template Main JS File -->
 <script src="static/js/main.js" th:src="@{js/main.js}"></script>
 
+</main>
 </body>
 
 </html>
