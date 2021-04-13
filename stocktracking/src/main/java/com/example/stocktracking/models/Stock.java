@@ -1,43 +1,25 @@
 package com.example.stocktracking.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Stock {
-    private String currency;
+
+    @JsonProperty("01. symbol")
     public String symbol;
-    private double regularMarketPrice;
-    private String exchangeTimezoneName;
+    @JsonProperty("05. price")
+    private double price;
+    @JsonProperty("08. previous close")
     private double previousClose;
-    private boolean stat;
-    private String perc;
+    @JsonProperty("10. change percent")
+    private String percent;
+
 
     public Stock() {
     }
 
-    public boolean isStat() {
-        return stat;
-    }
-
-    public void setStat(boolean stat) {
-        this.stat = stat;
-    }
-
-    public String getPerc() {
-        return perc;
-    }
-
-    public void setPerc(String perc) {
-        this.perc = perc;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
 
     public String getSymbol() {
         return symbol;
@@ -47,20 +29,12 @@ public class Stock {
         this.symbol = symbol;
     }
 
-    public double getRegularMarketPrice() {
-        return regularMarketPrice;
+    public double getPrice() {
+        return price;
     }
 
-    public void setRegularMarketPrice(double regularMarketPrice) {
-        this.regularMarketPrice = regularMarketPrice;
-    }
-
-    public String getExchangeTimezoneName() {
-        return exchangeTimezoneName;
-    }
-
-    public void setExchangeTimezoneName(String exchangeTimezoneName) {
-        this.exchangeTimezoneName = exchangeTimezoneName;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public double getPreviousClose() {
@@ -71,17 +45,21 @@ public class Stock {
         this.previousClose = previousClose;
     }
 
+    public String getPercent() {
+        return percent;
+    }
+
+    public void setPercent(String percent) {
+        this.percent = percent;
+    }
+
     @Override
     public String toString() {
         return "Stock{" +
-                "currency='" + currency + '\'' +
-                ", symbol='" + symbol + '\'' +
-                ", regularMarketPrice=" + regularMarketPrice +
-                ", exchangeTimezoneName='" + exchangeTimezoneName + '\'' +
+                "symbol='" + symbol + '\'' +
+                ", price=" + price +
                 ", previousClose=" + previousClose +
-                ", stat=" + stat +
-                ", perc=" + perc +
-
+                ", percent='" + percent + '\'' +
                 '}';
     }
 }

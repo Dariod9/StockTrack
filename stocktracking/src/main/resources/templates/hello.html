@@ -5,8 +5,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<ul th:each="continet : ${continents}">
-    <li th:text="${continet}"></li>
+<ul th:each="s: ${stocks}">
+    <li th:text="${s.getSymbol()}"></li>
 </ul>
 <!--<p th:text="'Hello, ' + ${conts} + '!'" />-->
 </body>

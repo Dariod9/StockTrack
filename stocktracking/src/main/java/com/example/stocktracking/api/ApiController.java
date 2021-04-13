@@ -4,20 +4,22 @@ import com.example.stocktracking.models.Stock;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import java.util.ArrayList;
 
 @Controller
 public class ApiController {
+    @Autowired
+    private RestTemplate restTemplate;
     private static final Logger logger = LoggerFactory.getLogger(ApiController.class);
     private ArrayList<Stock> data;
 
@@ -28,70 +30,64 @@ public class ApiController {
             updateData();
         }
 
+        System.out.println(data.toString());
+
         model.addAttribute("stocks", data);
 
         return "index";
     }
 
-    @Scheduled(fixedRate = 10000)
+    // api só suporta 5 request por minuto e 500 por dia
+    // that was learned the hard way :)
+    @Scheduled(fixedRate = 60000) // 1 vez por minuto
     private void updateData(){
+
+        logger.info("Fetchind data from API!");
 
         ArrayList<Stock> temp = new ArrayList<>();
 
-        String[] symbols = {"TSLA", "NKE", "GOOGL", "AZN"};
+        String[] symbols = {"NKE", "TSLA", "GOOGL", "AZN"};
 
-        for (int i = 0; i <= symbols.length - 1; i++) {
-            String json = null;
-            try {
-                json = apiResponse(symbols[i]);
-            } catch (UnirestException e) {
-                logger.error("ERROR: Fetching data from API");
-            }
+        for (int i = 0; i < symbols.length; i++) {
 
-            Stock stock = null;
-            try {
-                stock = jsonToObject(json);
-            } catch (JsonProcessingException e) {
-                logger.error("ERROR: parsing json data");
-            }
-            System.out.println("stock : " + stock.toString());
+            String json = apiResponse(symbols[i]);
 
-            // calcular atributos
-            double per = Math.round((stock.getRegularMarketPrice() - stock.getPreviousClose()) / stock.getPreviousClose() * 10000);
-            double per2 = per / 100;
-            boolean stat = (per2 >= 0);
-            String perc = per2 + "%";
-            stock.setStat(stat);
-            stock.setPerc(perc);
+            Stock stock = jsonToObject(json);
 
             temp.add(stock);
         }
+
         this.data = temp;
         logger.info("Updated");
     }
 
-    private String apiResponse(String symbol) throws UnirestException {
-        HttpResponse<String> response = Unirest.get("https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-chart?interval=5m&symbol="+symbol+"&range=1d&region=US&=&=apidojo-yahoo-finance-v1.p.rapidapi.com")
-                .header("x-rapidapi-key", "15c0328c08msh88388eb63d58c40p1ae8b9jsnf4d797bbcc8f")
-                .header("x-rapidapi-host", "apidojo-yahoo-finance-v1.p.rapidapi.com")
-                .asString();
+    private String apiResponse(String symbol) {
+        String url = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + symbol + "&apikey=Z6CCUOWMUEO729W6";
+        UriComponentsBuilder builder =  UriComponentsBuilder.fromHttpUrl(url);
+        url = builder.build().toUriString();
 
-        System.out.println(response.getHeaders());
-        System.out.println("response: " + response.getBody());
+        logger.info("url: " + url);
 
-        return response.getBody();
+        String result = restTemplate.getForObject(url, String.class);
+
+        return result;
     }
 
-    private Stock jsonToObject(String json) throws JsonProcessingException {
+    private Stock jsonToObject(String json) {
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode node = objectMapper.readTree(String.valueOf(json));
+        JsonNode node = null;
+        Stock stock = null;
+        try {
+            node = objectMapper.readTree(String.valueOf(json));
+            String s = node.get("Global Quote").toString();
+            // json to object
+            stock = objectMapper.readValue(s, Stock.class);
+            System.out.println(stock.toString());
+        } catch (JsonProcessingException e) {
+            logger.error("ERROR! Something went wrong when parsing JSON. '\' + " + e.toString());
+        }
 
-        ArrayNode result = (ArrayNode) node.get("chart").get("result");
-        JsonNode meta = result.get(0).get("meta");
-        System.out.println("meta : " + meta);
-
-        // json to object
-        return objectMapper.readValue(meta.toString(), Stock.class);
+        return stock;
     }
 
 }
