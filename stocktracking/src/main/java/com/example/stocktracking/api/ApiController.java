@@ -1,6 +1,10 @@
 package com.example.stocktracking.api;
 
+import com.example.stocktracking.MainController;
 import com.example.stocktracking.models.Stock;
+import com.example.stocktracking.models.StockTable;
+import com.example.stocktracking.MainController.*;
+import com.example.stocktracking.models.StockTableRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +24,8 @@ import java.util.ArrayList;
 public class ApiController {
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private StockTableRepository rep;
     private static final Logger logger = LoggerFactory.getLogger(ApiController.class);
     private ArrayList<Stock> data;
 
@@ -56,6 +62,13 @@ public class ApiController {
 
             temp.add(stock);
         }
+
+        for(int i=0;i<temp.size();i++){
+            Stock a= temp.get(i);
+//            double per=(double) a.getPercent().replace("%","");
+            rep.save(new StockTable(a.getSymbol(), a.getPrice(), a.getPreviousClose()));
+        }
+//    }
 
         this.data = temp;
         logger.info("Updated");

@@ -1,6 +1,7 @@
 package com.example.stocktracking;
 
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
