@@ -1,9 +1,7 @@
 package com.example.stocktracking.api;
 
-import com.example.stocktracking.MainController;
 import com.example.stocktracking.models.Stock;
 import com.example.stocktracking.models.StockTable;
-import com.example.stocktracking.MainController.*;
 import com.example.stocktracking.models.StockTableRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,7 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Controller
 public class ApiController {
@@ -39,6 +39,62 @@ public class ApiController {
         System.out.println(data.toString());
 
         model.addAttribute("stocks", data);
+        int total= (int) rep.count();
+
+        ArrayList<StockTable> listaTSLA= new ArrayList<>();
+        ArrayList<StockTable> listaAZN= new ArrayList<>();
+        ArrayList<StockTable> listaNKE= new ArrayList<>();
+        ArrayList<StockTable> listaGOOGL= new ArrayList<>();
+
+        int cntNike=0;
+        int cntT=0;
+        int cntA=0;
+        int cntG=0;
+
+        for(int i=total;i>0;i--) {
+//            int tempIndex=i%4;
+//            System.out.println(tempIndex);
+//            switch(tempIndex){
+//                case 0:
+//                    listaNKE.add(rep.findById(i).get());
+//                case 1:
+//                    listaTSLA.add(rep.findById(i).get());
+//                case 2:
+//                    listaGOOGL.add(rep.findById(i).get());
+//                case 3:
+//                    listaAZN.add(rep.findById(i).get());
+//            }
+            StockTable sT = rep.findById(i).get();
+            if (sT.getSymbol().equalsIgnoreCase("nke")) {
+                if (listaNKE.size() < 10) {
+                    listaNKE.add(sT);
+                    cntNike++;
+                }
+            } else if (sT.getSymbol().equalsIgnoreCase("tsla")) {
+                if (listaTSLA.size() < 10) {
+                    listaTSLA.add(sT);
+                    cntT++;
+                }
+            } else if (sT.getSymbol().equalsIgnoreCase("googl")) {
+                if (listaGOOGL.size() < 10) {
+                    listaGOOGL.add(sT);
+                    cntG++;
+                }
+            } else if (sT.getSymbol().equalsIgnoreCase("azn")) {
+                if (listaAZN.size() < 10) {
+                    listaAZN.add(sT);
+                    cntA++;
+                }
+            }
+        }
+
+
+        ArrayList<ArrayList<StockTable>> lista= new ArrayList<>();
+        lista.add(listaNKE);
+        lista.add(listaAZN);
+        lista.add(listaGOOGL);
+        lista.add(listaTSLA);
+        model.addAttribute("listaGrande", lista);
 
         return "index";
     }

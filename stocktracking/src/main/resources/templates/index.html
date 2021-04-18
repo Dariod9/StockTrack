@@ -129,6 +129,28 @@
                     </div>
                 </div>
             </div>
+
+
+
+<!--            HISTORICO         -->
+            <h2 style="text-align: center;">Last 10 Values</h2>
+            <br>
+            <br>
+            <div class="row">
+                <div th:each="miniLista, iter : ${listaGrande}" class="row" data-aos="fade-up" >
+                    <div class="icon-box icon-box-pink">
+                        <!--                        <div class="icon"><i class="bx bxl-dribbble"></i></div>-->
+                        <br>
+                        <h4 class="title" th:text="${miniLista[0].getSymbol()}"></h4>
+                        <div th:each="valor : ${miniLista}">
+                            <span>
+                                <span th:if="${#strings.contains(valor.getPerc(), '-')}" style="color:red"><b>Value: </b><a  th:text="${valor.getPerc()}"></a></span>
+                                <span th:unless="${#strings.contains(valor.getPerc(), '-')}" style="color:green"><b>Value: </b><a  th:text="${valor.getPerc()}"></a></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- Mesma coisa mas com array        -->
         <!--            <div class="row">-->
