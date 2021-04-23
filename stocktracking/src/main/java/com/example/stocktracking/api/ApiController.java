@@ -100,8 +100,7 @@ public class ApiController {
     }
 
     // api só suporta 5 request por minuto e 500 por dia
-    // that was learned the hard way :)
-    @Scheduled(fixedRate = 60000) // 1 vez por minuto
+    @Scheduled(fixedRate = 10 * 60000) // 1 vez por minuto
     private void updateData(){
 
         logger.info("Fetchind data from API!");
