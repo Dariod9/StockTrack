@@ -1,4 +1,4 @@
-package com.example.stocktracking;
+package com.example.stocktracking.controllers;
 
 
 import org.springframework.context.annotation.Bean;

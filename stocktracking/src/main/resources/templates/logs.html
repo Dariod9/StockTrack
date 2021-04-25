@@ -49,7 +49,7 @@
         <nav id="navbar" class="navbar">
             <ul>
                 <li><a class="" href="/">Home</a></li>
-                <li><a class="active" href="/data">Data</a></li>
+                <li><a class="active" href="/logs">Logs</a></li>
                 <li><a href="/blog">Blog</a></li>
                 <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
                     <ul>
@@ -77,17 +77,16 @@
 </header><!-- End Header -->
 
 <main id="main">
-    <div>
-        <h3 style="text-align: center;">Stock Data</h3>
-        <br>
-        <ul>
-            <li><b>Currency:</b> <a th:text="${stock.getCurrency()}"></a></li>
-            <li><b>Symbol:</b> <a th:text="${stock.getSymbol()}"></a></li>
-            <li><b>TimeZone:</b> <a th:text="${stock.getExchangeTimezoneName()}"></a></li>
-            <li><b>Market Price:</b> <a th:text="${stock.getRegularMarketPrice()}"></a></li>
-            <li><b>Previous Close Price:</b> <a th:text="${stock.getPreviousClose()}"></a></li>
-        </ul>
-    </div>
+    <section class="services">
+        <div class="container">
+            <h2 style="text-align: center;">Logs</h2>
+            <br>
+            <br>
+            <ul th:each="log: ${logs}">
+                <li th:text="${log}"></li>
+            </ul>
+        </div>
+    </section>
 </main>
 
 </body>

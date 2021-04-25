@@ -1,4 +1,4 @@
-package com.example.stocktracking;
+package com.example.stocktracking.controllers;
 
 import com.example.stocktracking.kafka.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;

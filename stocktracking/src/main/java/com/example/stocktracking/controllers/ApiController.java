@@ -1,4 +1,4 @@
-package com.example.stocktracking.api;
+package com.example.stocktracking.controllers;
 
 import com.example.stocktracking.models.Stock;
 import com.example.stocktracking.models.StockTable;
@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Optional;
 
 @Controller
 public class ApiController {
+
     @Autowired
     private RestTemplate restTemplate;
+
     @Autowired
     private StockTableRepository rep;
     private static final Logger logger = LoggerFactory.getLogger(ApiController.class);
@@ -39,31 +39,25 @@ public class ApiController {
         System.out.println(data.toString());
 
         model.addAttribute("stocks", data);
-        int total= (int) rep.count();
+        model.addAttribute("listaGrande", getDataFromRepo());
+
+        return "index";
+    }
+
+    private ArrayList<ArrayList<StockTable>> getDataFromRepo(){
+        int total = (int) rep.count();
 
         ArrayList<StockTable> listaTSLA= new ArrayList<>();
         ArrayList<StockTable> listaAZN= new ArrayList<>();
         ArrayList<StockTable> listaNKE= new ArrayList<>();
         ArrayList<StockTable> listaGOOGL= new ArrayList<>();
 
-        int cntNike=0;
-        int cntT=0;
-        int cntA=0;
-        int cntG=0;
+        int cntNike = 0;
+        int cntT = 0;
+        int cntA = 0;
+        int cntG = 0;
 
-        for(int i=total;i>0;i--) {
-//            int tempIndex=i%4;
-//            System.out.println(tempIndex);
-//            switch(tempIndex){
-//                case 0:
-//                    listaNKE.add(rep.findById(i).get());
-//                case 1:
-//                    listaTSLA.add(rep.findById(i).get());
-//                case 2:
-//                    listaGOOGL.add(rep.findById(i).get());
-//                case 3:
-//                    listaAZN.add(rep.findById(i).get());
-//            }
+        for(int i = total; i > 0; i--) {
             StockTable sT = rep.findById(i).get();
             if (sT.getSymbol().equalsIgnoreCase("nke")) {
                 if (listaNKE.size() < 10) {
@@ -94,9 +88,8 @@ public class ApiController {
         lista.add(listaAZN);
         lista.add(listaGOOGL);
         lista.add(listaTSLA);
-        model.addAttribute("listaGrande", lista);
 
-        return "index";
+        return lista;
     }
 
     // api só suporta 5 request por minuto e 500 por dia
