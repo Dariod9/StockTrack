@@ -14,7 +14,6 @@ public class LoggerController {
 
     @GetMapping("/logs")
     public String logging(Model model){
-        System.out.println("---------Logs -> " + kafkaConsumer.getLogs());
         model.addAttribute("logs", kafkaConsumer.getLogs());
         model.addAttribute("events", kafkaConsumer.getEvents());
 

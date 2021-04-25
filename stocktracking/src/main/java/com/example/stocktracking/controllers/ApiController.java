@@ -31,9 +31,6 @@ public class ApiController {
     @Autowired
     private KafkaProducer kafkaProducer;
 
-    @Autowired
-    private KafkaController kafkaController= new KafkaController((kafkaProducer));
-
     private static final Logger logger = LoggerFactory.getLogger(ApiController.class);
     private ArrayList<Stock> data;
 
@@ -49,9 +46,9 @@ public class ApiController {
         model.addAttribute("stocks", data);
         model.addAttribute("listaGrande", getDataFromRepo());
 
-        String message="Página Inicial e chamada à API";
+        String message="Index page";
         logger.info(message);
-        kafkaController.messageToTopic(message);
+        kafkaProducer.send("logs", message);
 
 
         return "index";
@@ -111,12 +108,13 @@ public class ApiController {
 
         String message="Fetchind data from API!";
         logger.info(message);
-        kafkaController.messageToTopic(message);
+        kafkaProducer.send("logs", message);
 
         ArrayList<Stock> temp = new ArrayList<>();
 
-//        String[] symbols = {"NKE", "TSLA", "GOOGL", "AZN"};
-        String[] symbols = {"NKE"};         // to reduce api request
+        String[] symbols = {"NKE", "TSLA", "GOOGL", "AZN"};
+//        String[] symbols = {"NKE"};         // to reduce api request
+
         for (String symbol : symbols) {
 
             String json = apiResponse(symbol);
@@ -140,7 +138,7 @@ public class ApiController {
         this.data = temp;
         message="API Data Updated";
         logger.info(message);
-        kafkaController.messageToTopic(message);
+        kafkaProducer.send("logs", message);
     }
 
     private String apiResponse(String symbol) {
@@ -150,7 +148,7 @@ public class ApiController {
 
         String message= "url: " +url;
         logger.info(message);
-        kafkaController.messageToTopic(message);
+        kafkaProducer.send("logs", message);
 
         String result = restTemplate.getForObject(url, String.class);
 
@@ -169,6 +167,7 @@ public class ApiController {
             System.out.println(stock.toString());
         } catch (JsonProcessingException e) {
             logger.error("ERROR! Something went wrong when parsing JSON. \n + " + e);
+            kafkaProducer.send("logs", e.toString());
         }
 
         return stock;

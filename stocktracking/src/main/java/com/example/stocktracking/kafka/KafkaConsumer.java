@@ -29,7 +29,7 @@ public class KafkaConsumer {
     }
 
 
-    @KafkaListener(topics = "test_topic", groupId = "group_id")
+    @KafkaListener(topics = "logs", groupId = "group_id")
     private void consume(String message){
         logger.info("Message received : " + message);
         logs.add(message);
