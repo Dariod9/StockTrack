@@ -1,5 +1,6 @@
 package com.example.stocktracking.controllers;
 
+import com.example.stocktracking.kafka.KafkaProducer;
 import com.example.stocktracking.models.Stock;
 import com.example.stocktracking.models.StockTable;
 import com.example.stocktracking.models.StockTableRepository;
@@ -26,6 +27,10 @@ public class ApiController {
 
     @Autowired
     private StockTableRepository rep;
+
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
     private static final Logger logger = LoggerFactory.getLogger(ApiController.class);
     private ArrayList<Stock> data;
 
@@ -100,23 +105,27 @@ public class ApiController {
 
         ArrayList<Stock> temp = new ArrayList<>();
 
-        String[] symbols = {"NKE", "TSLA", "GOOGL", "AZN"};
+//        String[] symbols = {"NKE", "TSLA", "GOOGL", "AZN"};
+        String[] symbols = {"NKE"};         // to reduce api request
+        for (String symbol : symbols) {
 
-        for (int i = 0; i < symbols.length; i++) {
-
-            String json = apiResponse(symbols[i]);
+            String json = apiResponse(symbol);
 
             Stock stock = jsonToObject(json);
+
+            //
+            String[] ss = stock.getPercent().split("%");
+            double d = Double.parseDouble(ss[0]);
+            if (d < -0.5 || d > 0.5){
+                kafkaProducer.send("event" ,stock.getSymbol() + " had a hight variation!");
+            }
 
             temp.add(stock);
         }
 
-        for(int i=0;i<temp.size();i++){
-            Stock a= temp.get(i);
-//            double per=(double) a.getPercent().replace("%","");
+        for (Stock a : temp) {
             rep.save(new StockTable(a.getSymbol(), a.getPrice(), a.getPreviousClose()));
         }
-//    }
 
         this.data = temp;
         logger.info("Updated");
@@ -145,7 +154,7 @@ public class ApiController {
             stock = objectMapper.readValue(s, Stock.class);
             System.out.println(stock.toString());
         } catch (JsonProcessingException e) {
-            logger.error("ERROR! Something went wrong when parsing JSON. '\' + " + e.toString());
+            logger.error("ERROR! Something went wrong when parsing JSON. \n + " + e);
         }
 
         return stock;

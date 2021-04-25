@@ -79,6 +79,14 @@
 <main id="main">
     <section class="services">
         <div class="container">
+            <h2 style="text-align: center;">Events</h2>
+            <br>
+            <br>
+            <ul th:each="event: ${events}">
+                <span th:text="${event}"></span>
+            </ul>
+            <br>
+            <br>
             <h2 style="text-align: center;">Logs</h2>
             <br>
             <br>

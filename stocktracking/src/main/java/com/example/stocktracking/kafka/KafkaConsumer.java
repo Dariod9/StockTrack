@@ -13,14 +13,29 @@ public class KafkaConsumer {
     private static final Logger logger = LoggerFactory.getLogger(KafkaConsumer.class);
 
     private List<String> logs = new LinkedList<>();
+    private List<String> events = new LinkedList<>();
+
+    private String event_notification;
 
     public List<String> getLogs(){
         return this.logs;
     }
 
+    public List<String> getEvents(){
+        return this.events;
+    }
+
+
     @KafkaListener(topics = "test_topic", groupId = "group_id")
     private void consume(String message){
         logger.info("Message received : " + message);
         logs.add(message);
+    }
+
+    @KafkaListener(topics = "event", groupId = "group_id")
+    private void consume_event(String message){
+        this.event_notification = message;
+        logger.info("Message received : " + message);
+        events.add(message);
     }
 }
