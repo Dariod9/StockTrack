@@ -1,7 +1,9 @@
 package com.example.stocktracking.kafka;
 
+import com.example.stocktracking.controllers.KafkaController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import java.util.List;
 
 @Service
 public class KafkaConsumer {
+
     private static final Logger logger = LoggerFactory.getLogger(KafkaConsumer.class);
 
     private List<String> logs = new LinkedList<>();

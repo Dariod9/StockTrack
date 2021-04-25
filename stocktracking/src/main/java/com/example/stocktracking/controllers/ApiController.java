@@ -31,6 +31,9 @@ public class ApiController {
     @Autowired
     private KafkaProducer kafkaProducer;
 
+    @Autowired
+    private KafkaController kafkaController= new KafkaController((kafkaProducer));
+
     private static final Logger logger = LoggerFactory.getLogger(ApiController.class);
     private ArrayList<Stock> data;
 
@@ -45,6 +48,11 @@ public class ApiController {
 
         model.addAttribute("stocks", data);
         model.addAttribute("listaGrande", getDataFromRepo());
+
+        String message="Página Inicial e chamada à API";
+        logger.info(message);
+        kafkaController.messageToTopic(message);
+
 
         return "index";
     }
@@ -101,7 +109,9 @@ public class ApiController {
     @Scheduled(fixedRate = 10 * 60000) // 1 vez por minuto
     private void updateData(){
 
-        logger.info("Fetchind data from API!");
+        String message="Fetchind data from API!";
+        logger.info(message);
+        kafkaController.messageToTopic(message);
 
         ArrayList<Stock> temp = new ArrayList<>();
 
@@ -117,7 +127,7 @@ public class ApiController {
             String[] ss = stock.getPercent().split("%");
             double d = Double.parseDouble(ss[0]);
             if (d < -0.5 || d > 0.5){
-                kafkaProducer.send("event" ,stock.getSymbol() + " had a hight variation!");
+                kafkaProducer.send("event" ,stock.getSymbol() + " had a significant variation!");
             }
 
             temp.add(stock);
@@ -128,7 +138,9 @@ public class ApiController {
         }
 
         this.data = temp;
-        logger.info("Updated");
+        message="API Data Updated";
+        logger.info(message);
+        kafkaController.messageToTopic(message);
     }
 
     private String apiResponse(String symbol) {
@@ -136,7 +148,9 @@ public class ApiController {
         UriComponentsBuilder builder =  UriComponentsBuilder.fromHttpUrl(url);
         url = builder.build().toUriString();
 
-        logger.info("url: " + url);
+        String message= "url: " +url;
+        logger.info(message);
+        kafkaController.messageToTopic(message);
 
         String result = restTemplate.getForObject(url, String.class);
 
